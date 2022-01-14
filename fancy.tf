@@ -1,13 +1,3 @@
-# Purpose: use this file to demo private module registry
-# Input Variables: number_of_instances, name
-# Configuration:
-# 1) Fork https://github.com/mocofound/terraform-aws-consumer-elb and Add private module into TFE from
-# 2) Fork https://github.com/mocofound/terraform-aws-consumer-ec2-instance and Add private module into TFE from
-# 3) In code below, for all modules, change module versions appropriatly for your imports (e.g. version = "1.9")
-# 4) In code below, for all modules, change source = "" to match your modules source
-# 5) Modify variables as needed
-# 6) rename file from consumer-frontend-app.nothing to  consumer-frontend-app.tf
-
 variable "number_of_instances" {
   description = "Number of instances to create and attach to Consumer ELB"
   default     = 2
@@ -25,7 +15,7 @@ module "elb" {
 
 module "ec2_instances" {
   source         = "app.terraform.io/hashidemos/consumer-ec2-instance/aws"
-  version        = "1.7.2"
+  version        = "1.24.0"
   name           = "${var.name}-ec2"
   instance_count = var.number_of_instances
 }
