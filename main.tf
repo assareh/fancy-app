@@ -17,6 +17,15 @@ provider "aws" {
   region = data.terraform_remote_state.network.outputs.region
 }
 
+locals {
+  subnets = {
+    prod  = data.terraform_remote_state.network.outputs.production_subnet_id
+    stage = data.terraform_remote_state.network.outputs.staging_subnet_id
+    dev   = data.terraform_remote_state.network.outputs.development_subnet_id
+  }
+  vpc_id = data.terraform_remote_state.network.outputs.main_vpc
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -48,10 +57,6 @@ resource "aws_instance" "bastion" {
   )
 }
 
-locals {
-  subnets = {
-    prod  = data.terraform_remote_state.network.outputs.production_subnet_id
-    stage = data.terraform_remote_state.network.outputs.staging_subnet_id
-    dev   = data.terraform_remote_state.network.outputs.development_subnet_id
-  }
+output "bastion_ip" {
+  value = aws_instance.bastion.private_ip
 }
