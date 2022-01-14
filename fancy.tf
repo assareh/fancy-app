@@ -5,7 +5,7 @@ variable "number_of_instances" {
 
 module "elb" {
   source      = "app.terraform.io/hashidemos/consumer-elb/aws"
-  version     = "1.25.0"
+  version     = "1.26.0"
   name        = "${var.name}-elb"
   environment = var.environment
   # ELB attachments
