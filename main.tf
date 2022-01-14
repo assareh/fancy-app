@@ -30,6 +30,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "web" {
+  name          = "${var.org}-${var.environment}-web-instance"
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   subnet_id     = lookup(local.subnets, var.environment, "fail")
