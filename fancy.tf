@@ -5,7 +5,7 @@ variable "number_of_instances" {
 
 module "elb" {
   source      = "app.terraform.io/hashidemos/consumer-elb/aws"
-  version     = "1.24.0"
+  version     = "1.25.0"
   name        = "${var.name}-elb"
   environment = var.environment
   # ELB attachments
@@ -18,4 +18,8 @@ module "ec2_instances" {
   version        = "1.24.0"
   name           = "${var.name}-ec2"
   instance_count = var.number_of_instances
+}
+
+output "fancy-app-url" {
+  value = module.elb.dns_name
 }
