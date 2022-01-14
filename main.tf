@@ -33,7 +33,7 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_instance" "web" {
+resource "aws_instance" "bastion" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   subnet_id     = lookup(local.subnets, var.environment, "fail")
@@ -41,7 +41,7 @@ resource "aws_instance" "web" {
   tags = merge(
     local.common_tags,
     {
-      Name  = "${var.org}-${var.environment}-web-instance"
+      Name  = "${var.org}-${var.environment}-bastion-instance"
       owner = "Solutions Engineer"
       ttl   = "1"
     },
