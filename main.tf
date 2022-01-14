@@ -2,9 +2,9 @@ data "terraform_remote_state" "network" {
   backend = "remote"
 
   config = {
-    organization = "hashicorp"
+    organization = var.org
     workspaces = {
-      name = "${var.org}/${var.workspace_name}"
+      name = var.workspace_name
     }
   }
 }
