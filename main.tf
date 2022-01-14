@@ -10,6 +10,10 @@ data "terraform_remote_state" "network" {
 }
 
 provider "aws" {
+  default_tags {
+    tags = local.common_tags
+  }
+
   region = data.terraform_remote_state.network.outputs.region
 }
 
@@ -34,11 +38,14 @@ resource "aws_instance" "web" {
   instance_type = "t2.micro"
   subnet_id     = lookup(local.subnets, var.environment, "fail")
 
-  tags = {
-    Name  = "${var.org}-${var.environment}-web-instance"
-    owner = "Solutions Engineer"
-    ttl   = "1"
-  }
+  tags = merge(
+    local.common_tags,
+    {
+      Name  = "${var.org}-${var.environment}-web-instance"
+      owner = "Solutions Engineer"
+      ttl   = "1"
+    },
+  )
 }
 
 locals {
