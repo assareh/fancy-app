@@ -1,6 +1,6 @@
 module "my-fancy-service" {
   source  = "app.terraform.io/hashidemos/ecs-service/aws"
-  version = "1.0.0"
+  version = "1.0.1"
 
   name        = var.name
   environment = var.environment
