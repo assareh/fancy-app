@@ -3,6 +3,13 @@ variable "number_of_instances" {
   default     = 2
 }
 
+module "ec2_instances" {
+  source         = "app.terraform.io/hashidemos/consumer-ec2-instance/aws"
+  version        = "1.25.0"
+  name           = "${var.name}-ec2"
+  instance_count = var.number_of_instances
+}
+
 module "elb" {
   source      = "app.terraform.io/hashidemos/consumer-elb/aws"
   version     = "1.26.0"
@@ -11,13 +18,6 @@ module "elb" {
   # ELB attachments
   number_of_instances = var.number_of_instances
   instances           = module.ec2_instances.id
-}
-
-module "ec2_instances" {
-  source         = "app.terraform.io/hashidemos/consumer-ec2-instance/aws"
-  version        = "1.24.0"
-  name           = "${var.name}-ec2"
-  instance_count = var.number_of_instances
 }
 
 output "fancy-app-url" {
