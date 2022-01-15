@@ -16,7 +16,7 @@ output "ec2_instance_ids" {
 
 module "elb" {
   source      = "app.terraform.io/hashidemos/consumer-elb/aws"
-  version     = "1.29.0"
+  version     = "1.30.0"
   name        = "${var.name}-elb"
   environment = var.environment
   # ELB attachments
