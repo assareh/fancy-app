@@ -10,9 +10,13 @@ module "ec2_instances" {
   instance_count = var.number_of_instances
 }
 
+output "ec2_instance_ids" {
+  value = module.ec2_instances.id
+}
+
 module "elb" {
   source      = "app.terraform.io/hashidemos/consumer-elb/aws"
-  version     = "1.26.0"
+  version     = "1.27.0"
   name        = "${var.name}-elb"
   environment = var.environment
   # ELB attachments
