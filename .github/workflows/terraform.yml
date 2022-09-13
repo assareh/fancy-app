@@ -84,6 +84,7 @@ jobs:
       id: init
       run: |
         terraform init -input=false
+        terraform workspace new dev || true
         terraform workspace select fancy-app-production
 
     # Validate that all Terraform configuration files are syntactically valid and internally consistent
