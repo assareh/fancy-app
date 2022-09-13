@@ -83,7 +83,7 @@ jobs:
     - name: Terraform Init
       id: init
       run: |
-        terraform init
+        terraform init -input=false
         terraform workspace select fancy-app-production
 
     # Validate that all Terraform configuration files are syntactically valid and internally consistent
@@ -175,8 +175,8 @@ jobs:
     - name: Terraform Init
       id: init
       run: |
+        terraform init -input=false
         terraform workspace select fancy-app-staging
-        terraform init
 
     # Validate that all Terraform configuration files are syntactically valid and internally consistent
     - name: Terraform Validate
