@@ -9,7 +9,6 @@ resource "aws_vpc" "hashicat" {
 terraform {
   cloud {
     organization = "hashidemos"
-    hostname = "app.terraform.io" # Optional; defaults to app.terraform.io
 
     workspaces {
       tags = ["fancy-app"]
