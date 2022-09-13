@@ -82,7 +82,9 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       id: init
-      run: terraform workspace select fancy-app-production && terraform init
+      run: |
+        terraform workspace select fancy-app-production
+        terraform init
 
     # Validate that all Terraform configuration files are syntactically valid and internally consistent
     - name: Terraform Validate
@@ -172,7 +174,9 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       id: init
-      run: terraform workspace select fancy-app-staging && terraform init
+      run: |
+        terraform workspace select fancy-app-staging
+        terraform init
 
     # Validate that all Terraform configuration files are syntactically valid and internally consistent
     - name: Terraform Validate
