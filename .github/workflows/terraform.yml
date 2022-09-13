@@ -55,6 +55,9 @@ jobs:
     name: 'Terraform'
     runs-on: ubuntu-latest
     environment: production
+    env:
+      TF_IN_AUTOMATION: true
+      TF_WORKSPACE: fancy-app-production
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -84,8 +87,6 @@ jobs:
       id: init
       run: |
         terraform init -input=false
-        terraform workspace new dev || true
-        terraform workspace select fancy-app-production
 
     # Validate that all Terraform configuration files are syntactically valid and internally consistent
     - name: Terraform Validate
