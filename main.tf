@@ -8,6 +8,11 @@ data "tfe_outputs" "control_workspace" {
 
 provider "aws" {
   region = var.region
+
+  assume_role {
+    role_arn     = var.aws_role_arn
+    session_name = var.TFC_RUN_ID
+  }
 }
 
 data "aws_subnet" "this" {
