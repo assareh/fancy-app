@@ -7,7 +7,7 @@ data "tfe_outputs" "control_workspace" {
 }
 
 provider "aws" {
-  region = var.region
+  region = var.aws_region
 
   assume_role {
     role_arn     = var.aws_role_arn
@@ -15,11 +15,6 @@ provider "aws" {
   }
 }
 
-# data "aws_subnet" "this" {
-#   id = lookup(data.tfe_outputs.control_workspace.values.subnets, var.environment, null)
-# }
-
-output "temp" {
-  value = lookup(data.tfe_outputs.control_workspace.values.subnets, var.environment, null)
-  sensitive = true
+data "aws_subnet" "this" {
+  id = lookup(data.tfe_outputs.control_workspace.values.subnets, var.environment, null)
 }
