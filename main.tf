@@ -15,10 +15,11 @@ provider "aws" {
   }
 }
 
-data "aws_subnet" "this" {
-  id = lookup(data.tfe_outputs.control_workspace.values.subnets, var.environment, null)
-}
+# data "aws_subnet" "this" {
+#   id = lookup(data.tfe_outputs.control_workspace.values.subnets, var.environment, null)
+# }
 
 output "temp" {
   value = lookup(data.tfe_outputs.control_workspace.values.subnets, var.environment, null)
+  sensitive = true
 }
