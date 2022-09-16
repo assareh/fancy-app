@@ -318,7 +318,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-    - uses: kvrhdn/tfe-run@v1
+      uses: kvrhdn/tfe-run@v1
       with:
         token: ${{ secrets.TF_API_TOKEN }}
         workspace: fancy-app-production
