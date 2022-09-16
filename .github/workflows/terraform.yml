@@ -282,7 +282,7 @@ jobs:
 
   terraform-production:
     name: 'Production'
-#    needs: [terraform-development, terraform-staging]
+    needs: [terraform-development, terraform-staging]
     runs-on: ubuntu-latest
     environment: production
 
@@ -316,8 +316,7 @@ jobs:
     - name: Run TFLint
       run: tflint -f compact
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
+    - name: Terraform Apply
       uses: kvrhdn/tfe-run@v1
       with:
         token: ${{ secrets.TF_API_TOKEN }}
@@ -327,5 +326,3 @@ jobs:
           GitHub Action run triggered using tfe-run (commit: ${{ github.SHA }})
         wait-for-completion: true
       id: tfe-run
-
-#... next steps can access the run URL with ${{ steps.tfe-run.outputs.run-url }}
