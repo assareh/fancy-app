@@ -280,3 +280,50 @@ jobs:
 # as a Branch Protection rule. This adds another layer of protection, ensuring that this workflow
 # successfully completes before changes are merged into main.
 
+  terraform-production:
+    name: 'Production'
+    needs: [terraform-development, terraform-staging]
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - uses: actions/cache@v2
+      name: Cache plugin dir
+      with:
+        path: ~/.tflint.d/plugins
+        key: ubuntu-latest-tflint-${{ hashFiles('.tflint.hcl') }}
+
+    - uses: terraform-linters/setup-tflint@v2
+      name: Setup TFLint
+      with:
+        tflint_version: latest
+
+    - name: Show version
+      run: tflint --version
+
+    - name: Init TFLint
+      run: tflint --init
+
+    - name: Run TFLint
+      run: tflint -f compact
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+    - uses: kvrhdn/tfe-run@v1
+      with:
+        token: ${{ secrets.TF_API_TOKEN }}
+        workspace: fancy-app-production
+        message: |
+          Run triggered using tfe-run (commit: ${{ github.SHA }})
+      id: tfe-run
+
+#... next steps can access the run URL with ${{ steps.tfe-run.outputs.run-url }}
