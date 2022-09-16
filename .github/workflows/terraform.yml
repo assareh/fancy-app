@@ -316,13 +316,28 @@ jobs:
     - name: Run TFLint
       run: tflint -f compact
 
-    - name: Terraform Apply
+    - name: Terraform Plan
+      if: github.event_name == 'pull_request'
       uses: kvrhdn/tfe-run@v1
       with:
         token: ${{ secrets.TF_API_TOKEN }}
         organization: hashidemos
         workspace: fancy-app-production
+        type: plan
         message: |
           GitHub Action run triggered using tfe-run (commit: ${{ github.SHA }})
         wait-for-completion: true
-      id: tfe-run
+      id: tfe-plan
+
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: kvrhdn/tfe-run@v1
+      with:
+        token: ${{ secrets.TF_API_TOKEN }}
+        organization: hashidemos
+        workspace: fancy-app-production
+        type: apply
+        message: |
+          GitHub Action run triggered using tfe-run (commit: ${{ github.SHA }})
+        wait-for-completion: true
+      id: tfe-apply

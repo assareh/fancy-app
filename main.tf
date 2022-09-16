@@ -38,3 +38,7 @@ resource "aws_instance" "example" {
   ami           = data.aws_ami.amazon-linux.id
   instance_type = "t3.micro"
 }
+
+output "instance_id" {
+  value = aws_instance.example.id
+}
