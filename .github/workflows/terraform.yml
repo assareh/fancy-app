@@ -52,7 +52,7 @@ on:
 
 jobs:
   terraform-development:
-    name: 'Terraform Dev'
+    name: 'Development'
     runs-on: ubuntu-latest
     environment: development
     env:
