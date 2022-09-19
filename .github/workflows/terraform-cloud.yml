@@ -172,7 +172,8 @@ jobs:
           const output = `#### Terraform Cost Estimate 💰\`${{ steps.cost.outcome }}\`
 
           <details><summary>Show Cost Estimate</summary>
-
+          ${{ steps.cost.outputs.stdout }}
+          
           \`\`\`\n
           ${process.env.COST}
           \`\`\`
@@ -295,7 +296,7 @@ jobs:
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
           #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-          ${{ steps.plan.outputs.stdout }}
+          
           <details><summary>Show Plan</summary>
 
           \`\`\`\n
