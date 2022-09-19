@@ -161,6 +161,12 @@ jobs:
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve
 
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      id: apply
+      run: |
+        echo ${process.env.apply} | grep -E 'run-[a-zA-Z0-9]+'
+
 # Tip: In a production environment, consider adding "Require status checks to pass before merging"
 # as a Branch Protection rule. This adds another layer of protection, ensuring that this workflow
 # successfully completes before changes are merged into main.
