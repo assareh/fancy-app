@@ -75,4 +75,5 @@ jobs:
         TFC_RUN_ID=`echo "${{ steps.tfe-apply.outputs.run-url }}" | grep -oE 'run-[a-zA-Z0-9]+'`
         echo $TFC_RUN_ID
         COST_ESTIMATE_ID=`curl https://app.terraform.io/api/v2/runs/$TFC_RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq -r '.data.relationships."cost-estimate".data.id'`
-        curl https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" 
+        curl https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq
+        echo 'Now format it pretty!'

@@ -162,10 +162,14 @@ jobs:
       id: apply
       run: terraform apply -auto-approve
 
-    # - name: Get Cost Estimate ID
-    #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    #   run: |
-    #      '${{ steps.apply.outputs.stdout || steps.apply.outputs.stderr }}' | grep -E 'run-[a-zA-Z0-9]+'
+    - name: Get Terraform Cost Estimate
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        TFC_RUN_ID=`echo "${{ steps.apply.outputs.stdout }}" | grep -oE 'run-[a-zA-Z0-9]+'`
+        echo $TFC_RUN_ID
+        COST_ESTIMATE_ID=`curl https://app.terraform.io/api/v2/runs/$TFC_RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq -r '.data.relationships."cost-estimate".data.id'`
+        curl https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq
+        echo 'Now format it pretty!'
 
 # Tip: In a production environment, consider adding "Require status checks to pass before merging"
 # as a Branch Protection rule. This adds another layer of protection, ensuring that this workflow
