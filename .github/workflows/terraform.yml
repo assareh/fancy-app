@@ -351,5 +351,5 @@ jobs:
     - name: Get cost estimate
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
-        echo "${{ steps.tfe-apply.outputs.run-url }}"
-        curl -X POST https://app.terraform.io/api/v2/runs/RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}"
+        TFC_RUN_ID=(echo "${{ steps.tfe-apply.outputs.run-url }}" | grep -E 'run-[a-zA-Z0-9]+')
+        curl -X POST https://app.terraform.io/api/v2/runs/$TFC_RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}"
