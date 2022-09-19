@@ -125,7 +125,7 @@ jobs:
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
       env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        PLAN: "${{ steps.plan.outputs.stdout }}"
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
@@ -287,7 +287,7 @@ jobs:
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
       env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        PLAN: "${{ steps.plan.outputs.stdout }}"
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
@@ -295,7 +295,7 @@ jobs:
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
           #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-
+          ${{ steps.plan.outputs.stdout }}
           <details><summary>Show Plan</summary>
 
           \`\`\`\n
