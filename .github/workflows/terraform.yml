@@ -236,6 +236,13 @@ jobs:
       continue-on-error: true
       # This step will continue even when it errors. This allows the next step to display the plan error message even if this step fails.
 
+    # Get cost estimate
+    - name: Terraform Cost Estimate
+      id: cost
+      if: github.event_name == 'pull_request'
+      run: |
+        echo '${process.env.PLAN}' | grep -E 'run-[a-zA-Z0-9]+'
+
     - name: Update Pull Request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
