@@ -69,8 +69,8 @@ jobs:
         wait-for-completion: true
       id: tfe-apply
 
-    - name: Get cost estimate
+    - name: Get Terraform Cost Estimate
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
-        TFC_RUN_ID=(echo "${{ steps.tfe-apply.outputs.run-url }}" | grep -oE 'run-[a-zA-Z0-9]+')
+        TFC_RUN_ID=`echo "${{ steps.tfe-apply.outputs.run-url }}" | grep -oE 'run-[a-zA-Z0-9]+'`
         curl -X POST https://app.terraform.io/api/v2/runs/$TFC_RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}"
