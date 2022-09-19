@@ -288,7 +288,7 @@ jobs:
 
   terraform-production:
     name: 'Production'
-    needs: [terraform-development, terraform-staging]
+#    needs: [terraform-development, terraform-staging]
     runs-on: ubuntu-latest
     environment: production
 
