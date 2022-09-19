@@ -165,7 +165,7 @@ jobs:
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
       env:
-        COST: "terraform\n${{ steps.cost.outputs.stdout }}"
+        COST: "${{ steps.cost.outputs.stdout }}"
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
