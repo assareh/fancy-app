@@ -165,7 +165,7 @@ jobs:
     - name: Get Cost Estimate ID
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
-        echo ${process.env.apply} | grep -E 'run-[a-zA-Z0-9]+'
+        echo '${{ steps.apply.outputs.stdout || steps.apply.outputs.stderr }}' | grep -E 'run-[a-zA-Z0-9]+'
 
 # Tip: In a production environment, consider adding "Require status checks to pass before merging"
 # as a Branch Protection rule. This adds another layer of protection, ensuring that this workflow
