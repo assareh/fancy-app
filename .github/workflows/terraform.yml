@@ -162,10 +162,10 @@ jobs:
       id: apply
       run: terraform apply -auto-approve
 
-    - name: Get Cost Estimate ID
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        echo '${{ steps.apply.outputs.stdout || steps.apply.outputs.stderr }}' | grep -E 'run-[a-zA-Z0-9]+'
+    # - name: Get Cost Estimate ID
+    #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    #   run: |
+    #      '${{ steps.apply.outputs.stdout || steps.apply.outputs.stderr }}' | grep -E 'run-[a-zA-Z0-9]+'
 
 # Tip: In a production environment, consider adding "Require status checks to pass before merging"
 # as a Branch Protection rule. This adds another layer of protection, ensuring that this workflow
@@ -347,3 +347,9 @@ jobs:
           GitHub Action run triggered using tfe-run (commit: ${{ github.SHA }})
         wait-for-completion: true
       id: tfe-apply
+
+    - name: Get cost estimate
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        echo "${{ steps.tfe-run.outputs.run-url }}"
+        curl -X POST https://app.terraform.io/api/v2/runs/RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}"
