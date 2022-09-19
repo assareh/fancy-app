@@ -151,6 +151,43 @@ jobs:
             body: output
           })
 
+    - name: Get Terraform Cost Estimate
+      if: github.event_name == 'pull_request'
+      id: cost
+      run: |
+        TFC_RUN_ID=`echo "${{ steps.plan.outputs.stdout }}" | grep -oE 'run-[a-zA-Z0-9]+'`
+        echo $TFC_RUN_ID
+        COST_ESTIMATE_ID=`curl --silent https://app.terraform.io/api/v2/runs/$TFC_RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq -r '.data.relationships."cost-estimate".data.id'`
+        curl --silent https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq
+        echo 'Now format it pretty!'
+
+    - name: Update Pull Request
+      uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      env:
+        COST: "terraform\n${{ steps.cost.outputs.stdout }}"
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const output = `#### Terraform Cost Estimate 💰\`${{ steps.cost.outcome }}\`
+
+          <details><summary>Show Cost Estimate</summary>
+
+          \`\`\`\n
+          ${process.env.COST}
+          \`\`\`
+
+          </details>
+
+          *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+
     - name: Terraform Plan Status
       if: steps.plan.outcome == 'failure'
       run: exit 1
@@ -167,8 +204,8 @@ jobs:
       run: |
         TFC_RUN_ID=`echo "${{ steps.apply.outputs.stdout }}" | grep -oE 'run-[a-zA-Z0-9]+'`
         echo $TFC_RUN_ID
-        COST_ESTIMATE_ID=`curl https://app.terraform.io/api/v2/runs/$TFC_RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq -r '.data.relationships."cost-estimate".data.id'`
-        curl https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq
+        COST_ESTIMATE_ID=`curl --silent https://app.terraform.io/api/v2/runs/$TFC_RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq -r '.data.relationships."cost-estimate".data.id'`
+        curl --silent https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq
         echo 'Now format it pretty!'
 
 # Tip: In a production environment, consider adding "Require status checks to pass before merging"
