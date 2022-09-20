@@ -36,11 +36,7 @@ data "aws_ami" "amazon-linux" {
 
 resource "aws_instance" "example" {
   count = 2
-  
+
   ami           = data.aws_ami.amazon-linux.id
   instance_type = "t3.micro"
-}
-
-output "instance_id" {
-  value = aws_instance.example.id
 }
