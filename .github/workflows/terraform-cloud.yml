@@ -58,6 +58,8 @@ jobs:
     env:
       TF_IN_AUTOMATION: true
       TF_WORKSPACE: fancy-app-development
+    outputs:
+      cost-estimate: ${{ steps.set-output.outputs.cost-estimate }}
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -161,21 +163,26 @@ jobs:
         echo "::set-output name=cost_estimate::$COST_ESTIMATE"
         echo 'Now format it pretty!'
 
+    - name: Output Terraform Cost Estimate
+      if: github.event_name == 'pull_request'
+      id: set-output
+      env:
+        cost: "${{ steps.cost.outputs.stdout }}"
+      with:
+        script: core.setOutput("cost-estimate", `${{ env.cost }}`);       
+
     - name: Update Pull Request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
-      env:
-        COST: "${{ steps.cost.outputs.stdout }}"
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           const output = `#### Terraform Cost Estimate 💰\`${{ steps.cost.outcome }}\`
-          ${{ steps.cost.outputs.cost_estimate }}
+
           <details><summary>Show Cost Estimate</summary>
-          ${{ steps.cost.outputs.stdout }}
 
           \`\`\`\n
-          ${process.env.COST}
+          ${{ needs.terraform-development.outputs.cost-estimate }}
           \`\`\`
 
           </details>
