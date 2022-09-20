@@ -59,7 +59,7 @@ jobs:
       TF_IN_AUTOMATION: true
       TF_WORKSPACE: fancy-app-development
     outputs:
-      cost-estimate: ${{ steps.set-output.outputs.cost-estimate }}
+      cost-estimate: ${{ steps.cost.outputs.cost-estimate }}
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -159,18 +159,12 @@ jobs:
       run: |
         TFC_RUN_ID=`echo "${{ steps.plan.outputs.stdout }}" | grep -oE 'run-[a-zA-Z0-9]+'`
         COST_ESTIMATE_ID=`curl --silent https://app.terraform.io/api/v2/runs/$TFC_RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq -r '.data.relationships."cost-estimate".data.id'`
-        COST_ESTIMATE=`curl --silent https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq`
-        echo "::set-output name=cost_estimate::$COST_ESTIMATE"
+        content=`curl --silent https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq`
         echo 'Now format it pretty!'
-
-    - name: Output Terraform Cost Estimate
-      uses: actions/github-script@v5
-      if: github.event_name == 'pull_request'
-      id: set-output
-      env:
-        cost: "${{ steps.cost.outputs.stdout }}"
-      with:
-        script: core.setOutput("cost-estimate", `${{ env.cost }}`);       
+        content="${content//'%'/'%25'}"
+        content="${content//$'\n'/'%0A'}"
+        content="${content//$'\r'/'%0D'}"
+        echo "::set-output name=cost-estimate::$content"          
 
     - name: Update Pull Request
       uses: actions/github-script@v6
