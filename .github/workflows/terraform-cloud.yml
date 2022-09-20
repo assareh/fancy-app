@@ -164,6 +164,7 @@ jobs:
         echo 'Now format it pretty!'
 
     - name: Output Terraform Cost Estimate
+      uses: actions/github-script@v5
       if: github.event_name == 'pull_request'
       id: set-output
       env:
