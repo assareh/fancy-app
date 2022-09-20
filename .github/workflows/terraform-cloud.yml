@@ -84,22 +84,6 @@ jobs:
     #   run: |
     #     echo "The string is: ${{ steps.my_string.outputs.content }}"
 
-    - name: create string
-      run: |
-        MY_STRING=$(cat << EOF
-        first line
-        second line
-        third line
-        EOF
-        )
-        echo "MY_STRING<<EOF" >> $GITHUB_ENV
-        echo "$MY_STRING" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-      id: my_string
-    - name: display string
-      run: |
-        echo "The string is: ${{ env.MY_STRING }}"
-
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
@@ -192,12 +176,11 @@ jobs:
       run: |
         TFC_RUN_ID=`echo "${{ steps.plan.outputs.stdout }}" | grep -oE 'run-[a-zA-Z0-9]+'`
         COST_ESTIMATE_ID=`curl --silent https://app.terraform.io/api/v2/runs/$TFC_RUN_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq -r '.data.relationships."cost-estimate".data.id'`
-        content=`curl --silent https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq`
+        COST_ESTIMATE=`curl --silent https://app.terraform.io/api/v2/cost-estimates/$COST_ESTIMATE_ID -H "Content-Type: application/vnd.api+json" -H "Accept: application/vnd.api+json" -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" | jq`
         echo 'Now format it pretty!'
-        content="${content//'%'/'%25'}"
-        content="${content//$'\n'/'%0A'}"
-        content="${content//$'\r'/'%0D'}"
-        echo "::set-output name=cost-estimate::$content"          
+        echo "COST_ESTIMATE<<EOF" >> $GITHUB_ENV
+        echo "$COST_ESTIMATE" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
 
     - name: Update Pull Request
       uses: actions/github-script@v6
@@ -210,7 +193,7 @@ jobs:
           <details><summary>Show Cost Estimate</summary>
 
           \`\`\`\n
-          ${{ needs.terraform-development.outputs.cost-estimate }}
+          ${{ env.COST_ESTIMATE }}
           \`\`\`
 
           </details>
